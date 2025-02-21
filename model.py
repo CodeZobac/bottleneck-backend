@@ -123,58 +123,58 @@ class BottleneckPredictor:
 			
 		component_types = ['CPU', 'GPU', 'RAM']
 		
-		# Extract hardware specs from text
-		components = text.split(' with ')
-		cpu = components[0].split(' ', 1)[1]  # Remove "CPU" prefix
-		gpu = components[1].split(' ', 1)[1]  # Remove "GPU" prefix
-		ram = components[2].split(' ', 1)[1]  # Remove "RAM" prefix
+		# # Extract hardware specs from text
+		# components = text.split(' with ')
+		# cpu = components[0].split(' ', 1)[1]  # Remove "CPU" prefix
+		# gpu = components[1].split(' ', 1)[1]  # Remove "GPU" prefix
+		# ram = components[2].split(' ', 1)[1]  # Remove "RAM" prefix
 
-		# Simple hardware scoring (example values - you should adjust these)
-		cpu_scores = {
-			'AMD Ryzen 9 5950X': 95,
-			'Intel Core i9-12900K': 93,
-			# Add more CPUs...
-		}
+		# # Simple hardware scoring (example values - you should adjust these)
+		# cpu_scores = {
+		# 	'AMD Ryzen 9 5950X': 95,
+		# 	'Intel Core i9-12900K': 93,
+		# 	# Add more CPUs...
+		# }
 		
-		gpu_scores = {
-			'NVIDIA RTX 4080': 98,
-			'NVIDIA RTX 3080': 85,
-			# Add more GPUs...
-		}
+		# gpu_scores = {
+		# 	'NVIDIA RTX 4080': 98,
+		# 	'NVIDIA RTX 3080': 85,
+		# 	# Add more GPUs...
+		# }
 		
-		ram_scores = {
-			'DDR5 6000MHz': 90,
-			'DDR4 3200MHz': 70,
-			# Add more RAM configs...
-		}
+		# ram_scores = {
+		# 	'DDR5 6000MHz': 90,
+		# 	'DDR4 3200MHz': 70,
+		# 	# Add more RAM configs...
+		# }
 
-		# Get component scores
-		cpu_score = cpu_scores.get(cpu, 50)
-		gpu_score = gpu_scores.get(gpu, 50)
-		ram_score = ram_scores.get(ram, 50)
+		# # Get component scores
+		# cpu_score = cpu_scores.get(cpu, 50)
+		# gpu_score = gpu_scores.get(gpu, 50)
+		# ram_score = ram_scores.get(ram, 50)
 
-		# Calculate bottleneck using relative performance differences
-		scores = {
-			'CPU': cpu_score,
-			'GPU': gpu_score,
-			'RAM': ram_score
-		}
+		# # Calculate bottleneck using relative performance differences
+		# scores = {
+		# 	'CPU': cpu_score,
+		# 	'GPU': gpu_score,
+		# 	'RAM': ram_score
+		# }
 		
-		# Hardware-based bottleneck is the component with lowest score
-		hardware_bottleneck = min(scores.items(), key=lambda x: x[1])[0]
+		# # Hardware-based bottleneck is the component with lowest score
+		# hardware_bottleneck = min(scores.items(), key=lambda x: x[1])[0]
 		
 		# Compare ML prediction with hardware calculation
 		ml_bottleneck = component_types[predicted_class.item()]
 		
-		if ml_bottleneck != hardware_bottleneck:
-			logger.warning(f"ML prediction ({ml_bottleneck}) differs from hardware calculation ({hardware_bottleneck})")
-			logger.warning(f"Hardware scores: {scores}")
+		# if ml_bottleneck != hardware_bottleneck:
+		# 	# logger.warning(f"ML prediction ({ml_bottleneck}) differs from hardware calculation ({hardware_bottleneck})")
+		# 	logger.warning(f"Hardware scores: {scores}")
 
 		# Return both predictions
 		result = {
 			'ml_bottleneck': ml_bottleneck,
-			'hardware_bottleneck': hardware_bottleneck,
-			'hardware_scores': scores,
+			# 'hardware_bottleneck': hardware_bottleneck,
+			# 'hardware_scores': scores,
 			'ml_probabilities': {
 				component: prob.item()
 				for component, prob in zip(component_types, predictions[0])
@@ -209,9 +209,9 @@ if __name__ == "__main__":
 	model_save_path = './models/best_model'
 	loss_file = './models/best_loss.json'
 
-	cpu_path = '/home/caboz/dev/bottleneck-backend/data/CPU_UserBenchmarks.csv'
-	gpu_path = '/home/caboz/dev/bottleneck-backend/data/GPU_UserBenchmarks.csv'
-	ram_path = '/home/caboz/dev/bottleneck-backend/data/RAM_UserBenchmarks.csv'
+	cpu_path = './data/CPU_UserBenchmarks.csv'
+	gpu_path = './data/GPU_UserBenchmarks.csv'
+	ram_path = './data/RAM_UserBenchmarks.csv'
 
 	dataloader, tokenizer, max_length = prepare_data_for_training(
 		cpu_path, gpu_path, ram_path,
