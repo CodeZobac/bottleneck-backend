@@ -82,4 +82,9 @@ def get_combinations():
 		for gpu in gpus:
 			for ram in rams:
 				combinations.append(f"CPU {cpu} with GPU {gpu} and RAM {ram}")
+	print(combinations)
 	return combinations
+
+
+if __name__ == "__main__":
+	get_combinations()
