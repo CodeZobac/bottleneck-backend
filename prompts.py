@@ -81,7 +81,7 @@ def get_combinations():
 	for cpu in cpus:
 		for gpu in gpus:
 			for ram in rams:
-				combinations.append(f"CPU {cpu} with GPU {gpu} and RAM {ram}")
+				combinations.append(f"CPU {cpu} with GPU {gpu} with RAM {ram}")
 	print(combinations)
 	return combinations
 

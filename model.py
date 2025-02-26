@@ -9,7 +9,7 @@ from tqdm import tqdm
 import numpy as np
 from sklearn.metrics import classification_report
 from data import prepare_data_for_training
-
+from validation import BenchmarkValidator
 import torch.nn as nn
 
 # Setup logging
@@ -104,7 +104,31 @@ class BottleneckPredictor:
 				logger.info(f"This epoch loss of {epoch_loss:.4f} did not improve the Current loss {best_loss:.4f}, Skipping save...")
 	
 	def predict(self, text, tokenizer):
+		logger.info(f"Predicting bottleneck for: {text}")
 		
+		# Extract components from input text
+		try:
+			components = {}
+			parts = text.split(' with ')
+			
+			# Extract CPU
+			cpu_part = parts[0].replace('CPU ', '')
+			components['CPU'] = cpu_part
+
+			# Extract GPU
+			gpu_part = parts[1].replace('GPU ', '')
+			components['GPU'] = gpu_part
+
+			# Extract RAM
+			ram_part = parts[2].replace('RAM ', '')
+			components['RAM'] = ram_part
+			
+			logger.info(f"Extracted components: {components}")
+		except Exception as e:
+			logger.error(f"Error extracting components: {str(e)}")
+			components = {}
+
+		# Get ML prediction
 		self.model.eval()
 		encoding = tokenizer(
 			text,
@@ -122,76 +146,54 @@ class BottleneckPredictor:
 			predicted_class = torch.argmax(predictions, dim=1)
 			
 		component_types = ['CPU', 'GPU', 'RAM']
-		
-		# # Extract hardware specs from text
-		# components = text.split(' with ')
-		# cpu = components[0].split(' ', 1)[1]  # Remove "CPU" prefix
-		# gpu = components[1].split(' ', 1)[1]  # Remove "GPU" prefix
-		# ram = components[2].split(' ', 1)[1]  # Remove "RAM" prefix
-
-		# # Simple hardware scoring (example values - you should adjust these)
-		# cpu_scores = {
-		# 	'AMD Ryzen 9 5950X': 95,
-		# 	'Intel Core i9-12900K': 93,
-		# 	# Add more CPUs...
-		# }
-		
-		# gpu_scores = {
-		# 	'NVIDIA RTX 4080': 98,
-		# 	'NVIDIA RTX 3080': 85,
-		# 	# Add more GPUs...
-		# }
-		
-		# ram_scores = {
-		# 	'DDR5 6000MHz': 90,
-		# 	'DDR4 3200MHz': 70,
-		# 	# Add more RAM configs...
-		# }
-
-		# # Get component scores
-		# cpu_score = cpu_scores.get(cpu, 50)
-		# gpu_score = gpu_scores.get(gpu, 50)
-		# ram_score = ram_scores.get(ram, 50)
-
-		# # Calculate bottleneck using relative performance differences
-		# scores = {
-		# 	'CPU': cpu_score,
-		# 	'GPU': gpu_score,
-		# 	'RAM': ram_score
-		# }
-		
-		# # Hardware-based bottleneck is the component with lowest score
-		# hardware_bottleneck = min(scores.items(), key=lambda x: x[1])[0]
-		
-		# Compare ML prediction with hardware calculation
 		ml_bottleneck = component_types[predicted_class.item()]
-		
-		# if ml_bottleneck != hardware_bottleneck:
-		# 	# logger.warning(f"ML prediction ({ml_bottleneck}) differs from hardware calculation ({hardware_bottleneck})")
-		# 	logger.warning(f"Hardware scores: {scores}")
+		logger.info(f"ML model predicts bottleneck: {ml_bottleneck}")
 
-		# Return both predictions
+		# Get hardware validation
 		result = {
 			'ml_bottleneck': ml_bottleneck,
-			# 'hardware_bottleneck': hardware_bottleneck,
-			# 'hardware_scores': scores,
 			'ml_probabilities': {
 				component: prob.item()
 				for component, prob in zip(component_types, predictions[0])
 			}
 		}
-		return result
 		
-		
+		try:
+			if components:
+				logger.info("Starting hardware validation...")
+				validator = BenchmarkValidator(
+					cpu_csv='./data/CPU_UserBenchmarks.csv',
+					gpu_csv='./data/GPU_UserBenchmarks.csv', 
+					ram_csv='./data/RAM_UserBenchmarks.csv'
+				)
+				
+				# Try validation with all components first
+				validation = validator.validate_prediction(components)
+				
+				# If full validation fails, try with just CPU and GPU
+				if not validation and "CPU" in components and "GPU" in components:
+					logger.info("Trying validation with just CPU and GPU...")
+					validation = validator.validate_prediction({
+						"CPU": components["CPU"], 
+						"GPU": components["GPU"]
+					})
+					
+				logger.info(f"Validation result: {validation}")
+				
+				if validation:
+					result.update({
+						'hardware_bottleneck': validation['hardware_bottleneck'],
+						'hardware_scores': validation['relative_scores'],
+						'validation_match': validation['hardware_bottleneck'] == ml_bottleneck
+					})
+				else:
+					logger.warning("Hardware validation failed, no results returned")
+			else:
+				logger.warning("Component extraction failed, skipping validation")
+		except Exception as e:
+			logger.error(f"Error during hardware validation: {str(e)}")
 
-		# result = {
-		# 	'bottleneck': component_types[predicted_class.item()],
-		# 	'probabilities': {
-		# 		component: prob.item()
-		# 		for component, prob in zip(component_types, predictions[0])
-		# 	}
-		# }
-		# return result
+		return result
 
 	def save_model(self, path):
 		self.model.save_pretrained(path)
@@ -229,7 +231,6 @@ if __name__ == "__main__":
 		logger.info("No saved model found. Starting training from scratch...")
 
 	test_texts = get_combinations()
-
 	for test_text in test_texts:
 		predictor.train(dataloader, epochs=1)
 		result = predictor.predict(test_text, tokenizer)
