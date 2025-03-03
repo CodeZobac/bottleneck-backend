@@ -2,15 +2,18 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from handle_result import generate_recommendations, process_prediction
 from pydantic import BaseModel
-from get_data import get_unique_components
 import uvicorn
 from model import BottleneckPredictor
 import logging
 from transformers import AutoTokenizer
+from component_handler import get_categorized_components
 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+cpu_path = './data/CPU_UserBenchmarks.csv'
+gpu_path = './data/GPU_UserBenchmarks.csv'
 
 app = FastAPI()
 
@@ -41,6 +44,7 @@ class HardwareInput(BaseModel):
 class ComponentsResponse(BaseModel):
     cpus: list
     gpus: list
+    rams: list
 
 @app.get("/")
 async def root():
@@ -51,11 +55,13 @@ async def root():
 @app.get("/components", response_model=ComponentsResponse)
 async def get_components():
     try:
-        logger.info("Getting unique CPU and GPU components...")
-        components = get_unique_components(cpu_path, gpu_path)
+        components = get_categorized_components(
+            cpu_path='./data/CPU_UserBenchmarks.csv',
+            gpu_path='./data/GPU_UserBenchmarks.csv'
+        )
         return components
     except Exception as e:
-        logger.error(f"Error getting components: {str(e)}")
+        logger.error(f"Error retrieving components: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
     
 
