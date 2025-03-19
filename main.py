@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends, Security, status
-from fastapi.security import APIKeyHeader
+# from fastapi import Depends, Security, status
+# from fastapi.security import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 from handle_result import generate_recommendations, process_prediction
 from pydantic import BaseModel
@@ -19,22 +20,22 @@ gpu_path = './data/GPU_UserBenchmarks.csv'
 
 app = FastAPI()
 
-API_KEY_NAME = str(os.environ.get("API_KEY_NAME"))
-ALLOWED_URL= str(os.environ.get("ALLOWED_URL"))
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+# API_KEY_NAME = str(os.environ.get("API_KEY_NAME"))
+# ALLOWED_URL= str(os.environ.get("ALLOWED_URL"))
+# api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
-API_KEY = str(os.environ.get("API_KEY"))
-if not API_KEY:
-    logger.warning("API_KEY not set! API will be insecure")
-    raise Exception("API_KEY not set")
+# API_KEY = str(os.environ.get("API_KEY"))
+# if not API_KEY:
+#     logger.warning("API_KEY not set! API will be insecure")
+#     raise Exception("API_KEY not set")
 
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[ALLOWED_URL],  # For production, specify exact domains instead of "*"
+    allow_origins=["https://bottleneck-ninja.vercel.app"],  # For production, specify exact domains instead of "*"
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*", API_KEY_NAME],
+    allow_headers=["*"],
 )
 
 # Initialize model and tokenizer
@@ -59,23 +60,23 @@ class ComponentsResponse(BaseModel):
     gpus: list
     rams: list
 
-async def get_api_key(
-    api_key: str = Security(api_key_header)
-):
-    if api_key == API_KEY:
-        return api_key
-    raise HTTPException(
-        status_code=status.HTTP_403_FORBIDDEN, detail="Invalid API Key"
-    )
+# async def get_api_key(
+#     api_key: str = Security(api_key_header)
+# ):
+#     if api_key == API_KEY:
+#         return api_key
+#     raise HTTPException(
+#         status_code=status.HTTP_403_FORBIDDEN, detail="Invalid API Key"
+#     )
 
-@app.get("/", dependencies=[Depends(get_api_key)])
+@app.get("/")
 async def root():
     return {"message": "Welcome to the Bottleneck Prediction API"}
 
 
 # Calls the get_data function to send all CPU and GPU brands and models
 #/components
-@app.get(f"{endpoint1}", dependencies=[Depends(get_api_key)], response_model=ComponentsResponse)
+@app.get(f"{endpoint1}", response_model=ComponentsResponse)
 async def get_components():
     try:
         components = get_categorized_components(
@@ -88,7 +89,7 @@ async def get_components():
         raise HTTPException(status_code=500, detail=str(e))
     
 #/predict
-@app.post(f"{endpoint2}", dependencies=[Depends(get_api_key)])
+@app.post(f"{endpoint2}")
 async def predict_bottleneck(input_data: HardwareInput):
     try:
         # Get raw prediction from model
