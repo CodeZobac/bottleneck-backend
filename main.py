@@ -19,11 +19,11 @@ gpu_path = './data/GPU_UserBenchmarks.csv'
 
 app = FastAPI()
 
-API_KEY_NAME = os.environ.get("API_KEY_NAME")
-ALLOWED_URL= os.environ.get("ALLOWED_URL")
+API_KEY_NAME = str(os.environ.get("API_KEY_NAME"))
+ALLOWED_URL= str(os.environ.get("ALLOWED_URL"))
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
-API_KEY = os.environ.get("API_KEY")
+API_KEY = str(os.environ.get("API_KEY"))
 if not API_KEY:
     logger.warning("API_KEY not set! API will be insecure")
     raise Exception("API_KEY not set")
@@ -31,10 +31,10 @@ if not API_KEY:
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[f"{ALLOWED_URL}"],  # For production, specify exact domains instead of "*"
+    allow_origins=[ALLOWED_URL],  # For production, specify exact domains instead of "*"
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*", f"{API_KEY_NAME}"],
+    allow_headers=["*", API_KEY_NAME],
 )
 
 # Initialize model and tokenizer
@@ -106,5 +106,19 @@ async def predict_bottleneck(input_data: HardwareInput):
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT"))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    try:
+        # Get PORT from environment or use default port 8000
+        port_value = os.environ.get("PORT")
+        if not port_value:
+            logger.info(f"PORT not set. PORT={port_value}; Using default port 8000")
+            port = 8000
+        else:
+            port = int(port_value)  # Convert to integer
+        
+        logger.info(f"Starting server on port {port}")
+        uvicorn.run(app, host="0.0.0.0", port=port)
+    except ValueError as e:
+        logger.error(f"Invalid PORT value '{port_value}': {str(e)}")
+        # Fallback to default port
+        logger.info("Using default port 8000")
+        uvicorn.run(app, host="0.0.0.0", port=8000)
