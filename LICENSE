@@ -1,0 +1,87 @@
+PROPRIETARY LICENSE AGREEMENT
+
+Copyright (c) 2025 Afonso Caboz
+
+All rights reserved.
+
+TERMS AND CONDITIONS
+
+1. DEFINITIONS
+
+"Software" refers to the Bottleneck Analyzer API, including all of its source code, object code, 
+documentation, data files, and related materials.
+
+"Licensor" refers to the copyright holder of the Software.
+
+"Licensee" refers to the individual or entity that has been granted permission to use the Software 
+under the specific terms of this License.
+
+2. LICENSE GRANT
+
+The Licensor hereby grants the Licensee a non-transferable, non-exclusive, non-sublicensable, 
+revocable license to use the Software solely for the purposes explicitly authorized by the Licensor 
+in writing.
+
+3. RESTRICTIONS
+
+The Licensee shall not:
+
+a) Copy, reproduce, distribute, publish, display, or otherwise make the Software available to any 
+third party without the prior written consent of the Licensor.
+
+b) Modify, adapt, translate, reverse engineer, decompile, disassemble, or create derivative works 
+based on the Software.
+
+c) Use the Software to develop any product or service that competes with the Software.
+
+d) Remove, alter, or obscure any proprietary notices or labels contained on or within the Software.
+
+e) Use the Software for any illegal purpose or in violation of any local, state, national, or 
+international law.
+
+4. OWNERSHIP
+
+The Software is owned and copyrighted by the Licensor. The Licensee acknowledges that no title to 
+the intellectual property in the Software is transferred to the Licensee under this License.
+
+5. CONFIDENTIALITY
+
+The Licensee acknowledges that the Software constitutes valuable trade secrets of the Licensor. 
+The Licensee agrees to use reasonable efforts to protect the Software from unauthorized use, 
+reproduction, distribution, or publication.
+
+6. TERMINATION
+
+This License is effective until terminated. The Licensor may terminate this License at any time 
+if the Licensee breaches any provision of this License. Upon termination, the Licensee must cease 
+all use of the Software and destroy all copies, full or partial, of the Software.
+
+7. WARRANTY DISCLAIMER
+
+THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT 
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE 
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+8. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+9. GOVERNING LAW
+
+This License shall be governed by and construed in accordance with the laws of Europe, 
+without giving effect to any choice of law or conflict of law provisions.
+
+10. ENTIRE AGREEMENT
+
+This License constitutes the entire agreement between the parties with respect to the use of the 
+Software and supersedes all prior or contemporaneous understandings or agreements, written or oral, 
+regarding such subject matter.
+
+BY USING THE SOFTWARE, THE LICENSEE ACKNOWLEDGES THAT THEY HAVE READ THIS LICENSE, UNDERSTAND IT, 
+AND AGREE TO BE BOUND BY ITS TERMS AND CONDITIONS.

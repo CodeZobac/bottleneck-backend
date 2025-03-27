@@ -32,7 +32,7 @@ app = FastAPI()
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://bottleneck-ninja.vercel.app"],  # For production, specify exact domains instead of "*"
+    allow_origins=["*"],  # For production, specify exact domains instead of "*"
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -74,9 +74,9 @@ async def root():
     return {"message": "Welcome to the Bottleneck Prediction API"}
 
 
-# Calls the get_data function to send all CPU and GPU brands and models
+
 #/components
-@app.get(f"{endpoint1}", response_model=ComponentsResponse)
+@app.get("/components", response_model=ComponentsResponse)
 async def get_components():
     try:
         components = get_categorized_components(
@@ -89,7 +89,7 @@ async def get_components():
         raise HTTPException(status_code=500, detail=str(e))
     
 #/predict
-@app.post(f"{endpoint2}")
+@app.post("/predict")
 async def predict_bottleneck(input_data: HardwareInput):
     try:
         # Get raw prediction from model
@@ -114,7 +114,7 @@ if __name__ == "__main__":
             logger.info(f"PORT not set. PORT={port_value}; Using default port 8000")
             port = 8000
         else:
-            port = int(port_value)  # Convert to integer
+            port = int(port_value)  
         
         logger.info(f"Starting server on port {port}")
         uvicorn.run(app, host="0.0.0.0", port=port)
